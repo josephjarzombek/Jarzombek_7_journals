@@ -1,0 +1,8 @@
+What are strings?
+Collection of charecters.
+What are they good for?
+Writing names or anything that is not a number
+What are some string methods?
+Things that compare strings.
+How do we identify string methods? 
+The use strings.
