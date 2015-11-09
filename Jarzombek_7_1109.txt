@@ -1,0 +1,8 @@
+1. Are you ready to begin coding your game?
+I could be more prepared but I'm ready enoghe.
+2. Why or why not? 
+I know really well what I want to do but I havent mapped it out yet.
+3. What will be your biggest challenges?
+The math and set up to manage what you did previous turns.
+4. Why?
+I want it to be several turn based with long lasting effects.
