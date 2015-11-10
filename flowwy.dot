@@ -1,0 +1,17 @@
+digraph simple_map {
+
+A [label="Make America Great Again"]  //node B
+B [label="Make an 'offensive' comment"]	  //node E
+C [label="Make a public appearance."]
+D [label="Go to debate."]
+E [label="Stay at home and build your fortune"]
+
+A -> B [label="You fund your own campaing, say what you want. Math to change poll standings.", fontcolor=red]
+A -> C [label="No matter where you are Trump will find you. Math to change poll standings.", fontcolor=blue]
+A -> D [label="Ready to roast those Communist commentators? Math to change poll standings.", fontcolor=red]
+A -> E [label="Hey, even God took a day off. Math to change poll standings.", fontcolor=blue]
+B -> A [label="Another week has passed, you have i-1 left until the election." fontcolor=black]
+C -> A [label="Another week has passed, you have i-1 left until the election." fontcolor=black]
+D -> A [label="Another week has passed, you have i-1 left until the election." fontcolor=black]
+E -> A [label="Another week has passed, you have i-1 left until the election." fontcolor=black]
+}
