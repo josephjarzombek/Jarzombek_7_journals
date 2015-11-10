@@ -1,0 +1,3 @@
+In your game, how can you check what challenges the player has solved? Use booleans to track whether you have completed something.
+How can you track HP? A counter
+items? A boolean that will cause a method to run if it is true. this will give you the item.
