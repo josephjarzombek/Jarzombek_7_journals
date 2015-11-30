@@ -1,0 +1,9 @@
+Imagine you are explaining to a younger sibling or parent, Describe:
+A decription of smthing that can be connected to a specific phrase that will cause a function to ru
+Which methods did you use and how did you use them in your guessing game program?
+I used playgame method
+What is a while loop?
+a loop that while on does things that tou can add on to and it gos and gos until you stop it
+How did you use a while loop, boolean, and counter in your guessing game?
+I used playgame for while loop boolean in my while loop and counter,I used the counter for lifes in playgame (how many time the code will loop)
+
