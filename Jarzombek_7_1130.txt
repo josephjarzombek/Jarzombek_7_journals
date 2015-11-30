@@ -1,0 +1,4 @@
+In what ways were you successful with your game?
+I made most of what I had in mind, and can succesfully get  to all features I coded. My counters don't get messed up and with the math I included for saying "offensive" comments.
+The lose function, and the dialogue I included are as good as I intended them to be.
+
