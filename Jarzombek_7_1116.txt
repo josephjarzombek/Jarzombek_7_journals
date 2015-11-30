@@ -1,0 +1,6 @@
+No, really, How will you use methods in your game? Why?
+
+Be specific.
+My methods will run the action of my protagonist for that week, such as making a public  appearance or going to a debate.
+What values wil you pass to them. I will pas the value for the poll standings, which will be effected by the action.
+
