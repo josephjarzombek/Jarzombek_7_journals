@@ -1,0 +1,5 @@
+Is your guessig game a game? Why or why not?
+Yes. It has a win and lose function and requires user input.
+    What would make it better?
+More methods to give more options on how to play,.
+
