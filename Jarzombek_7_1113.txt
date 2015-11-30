@@ -1,0 +1,6 @@
+
+How will you use while loops in your game? Why?
+While loops will be used to run diffrent methods at diffrent times. This will allow me to stop one method so it doesnt interfere with another
+    How will you use methods in your game? Why?
+They will run diffrent codes that will be frequently repeated.
+
