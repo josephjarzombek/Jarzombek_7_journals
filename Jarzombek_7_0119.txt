@@ -1,0 +1,8 @@
+What slick game did you create?
+I created a kind of find the items, avoid the bad guy, make it to the end kind of game.
+What challenges did you solve
+I solved the issue of me having a non-operational tileset by getting another tilset.
+Before the Winter break, you were admonished to finish your maps and spritesheets - so that you would be ready to go with the game when we got back. Did you? Why or why not?
+I kinda did. I made my spritesheet but my map i used a tile sheet i never found out how to get to work. but i just used the basic tiles instead.
+Were you able to meet the timeline? Why or why not? [Focus on what you did or did not do. Journals ascribing blame to others will not be considered.
+No. I spent like three days trying to get my tileset to work/talking, so i didnt get very far.
