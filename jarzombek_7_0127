@@ -1,0 +1,10 @@
+How do you add an image to a slick game?
+Image img = new Image (file/img.png)
+Where is the image drawn? [What code? Be specific.] 
+for (img i : array) {
+			if (i.isvisible) {
+				i.currentImage.draw(i.x, i.y);
+				// draw the hitbox
+				g.draw(i.hitbox);
+                        }
+                }
