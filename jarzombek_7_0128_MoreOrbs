@@ -1,0 +1,6 @@
+What is a class constructor?
+Something that is used in causing a class to function as you.
+What should be included in a class constructor for orbs? Why?
+int x; and int y; these give the loction of the orb int size; gives the size. boolean isVisble. makes the orbvisible.
+What methods should the orb have? why?
+Public Orb. Makes the orb.
