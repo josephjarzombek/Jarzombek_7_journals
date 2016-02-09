@@ -1,0 +1,2 @@
+How can / will you make the orb move in the direction you are facing?
+You make a comand in player class so that the last direction the player moved will make them face that direction. Then we can make the ords have speed and a direction that matches this.
