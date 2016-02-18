@@ -1,0 +1,31 @@
+Explain this code:
+public Animation Playeranime, up, down, left, right, sprite, wait;
+    public Player() throws SlickException {
+        SpriteSheet runningSS = new SpriteSheet(
+                "res/ogrespritesheet.png", 64, 64, 0);
+        up = new Animation();
+        up.setAutoUpdate(true);
+        up.addFrame(runningSS.getSprite(0, 8), 330);
+        up.addFrame(runningSS.getSprite(1, 8), 330);
+        up.addFrame(runningSS.getSprite(2, 8), 330);
+        up.addFrame(runningSS.getSprite(3, 8), 330);
+        up.addFrame(runningSS.getSprite(4, 8), 330);
+        up.addFrame(runningSS.getSprite(5, 8), 330);
+        up.addFrame(runningSS.getSprite(6, 8), 330);
+        up.addFrame(runningSS.getSprite(7, 8), 330);
+        up.addFrame(runningSS.getSprite(8, 8), 330);
+This is what makes the character move in an animated way while the character is idle.
+Why would it be unrealistic / unproductive  to memorize Slick syntax - what are the skills we were trying to practice?
+There are way to many syntax lines, and slick is hardly used in the real world, we are just using it to practice. We are Trying to practice reasoning and problem solving with slightly limited information
+What is an array?
+An array is something that assigns values, and organizes them
+How do you make an array? Give an example.
+int[] stuff = {1, 2, 3, 4};
+What is an ArrayList?
+Arraylists are dynamic and can be edited at any time.
+How do you make an arraylist?
+Arraylist<This>list = new Arraylist();
+In Netbeans, make an arraylist. Use autocompletion with the created arraylist (the '.' and pop-up):
+What are three useful arraylist methods that you identified?
+What is the difference between an array and an arraylist?
+How could we make a health counter for an avatar?
