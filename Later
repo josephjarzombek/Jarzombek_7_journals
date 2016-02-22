@@ -28,4 +28,6 @@ Arraylist<This>list = new Arraylist();
 In Netbeans, make an arraylist. Use autocompletion with the created arraylist (the '.' and pop-up):
 What are three useful arraylist methods that you identified?
 What is the difference between an array and an arraylist?
+An arraylist can be updated. 
 How could we make a health counter for an avatar?
+Make an int array list so that as you connect with a certain hit box, health goes down.
