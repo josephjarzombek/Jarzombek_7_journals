@@ -1,5 +1,5 @@
 What does the code below do?
-
+Prints 'x' on a grid when i=0 and j=0, when i=2 and j=3, when i=4 and j=4, when i=7 and j=7,when i=8 and j=8.
 How could you make it print an X? i.e., what array values would you change?
 
 How could you use this to make a 5 in a row game?
