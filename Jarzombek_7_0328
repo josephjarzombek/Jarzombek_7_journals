@@ -1,0 +1,25 @@
+What differences and similarities have you noticed?
+Java is object-oriented, while C is function oriented.
+the code commenting is the same.
+For loops in Java and in C are the same.
+What code adaptations have you made? 
+I have done alot of experimenting with the photo resistor, such as making it work with a piezzo
+buzzer, or haveing more speciffic amounts of light to pick up.
+What is required for a circuit?
+For a circuit, you need to have some sort of voltage, and a chain of conductive materials to 
+allow the electrons to move in a circle. 
+How are programs compiled with Arduino?
+They are compiled using a highly advanced language called C. C is compiled and added to
+the circuit board to tell the wires what to power and what to do specifically.
+Describe the projects you have completed this/last week and what you have learned from 
+them.
+The projects that we created last week were circuits. They were made specifically to get
+a certain output. For example, we created LED circuits, they had an LED on the breadboard
+and the wires connected to the circuit board in specific places. Then, we just made
+several different functions for the LED light. In one, we had a potentiometer to adjust
+how often the LED would blink. I later moved on to more advanced work, I got to a game
+called "Simon Says" and four LED's lit up and you would have to press the corresponding
+button. Every time you got it correct, it would add on more rythms/patterns. I have
+learned to first unplug all of the cords before I begin to use a circuit board, and other
+general things with wireing such as making sure the ground is in the right order and the 
+importants of resistors.
