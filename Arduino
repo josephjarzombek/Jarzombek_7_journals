@@ -1,3 +1,5 @@
+#include <Servo.h>
+
 #define NOTE_B0 31
 #define NOTE_C1 33
 #define NOTE_CS1 35
@@ -88,48 +90,40 @@
 #define NOTE_D8 4699
 #define NOTE_DS8 4978
 
-#define CHOICE_OFF      0 //Used to control LEDs
-#define CHOICE_NONE     0 //Used to check buttons
+#define CHOICE_OFF      0
+#define CHOICE_NONE     0
 #define CHOICE_RED  (1 << 0)
 #define CHOICE_GREEN    (1 << 1)
 #define CHOICE_BLUE (1 << 2)
 #define CHOICE_YELLOW   (1 << 3)
-#define CHOICE_WIN  0
+
 #define LED_RED     3
 #define LED_GREEN   10
 #define LED_BLUE    5
 #define LED_YELLOW  13
-#define LED_WIN 0
 
-// Button pin definitions
 #define BUTTON_RED    9
 #define BUTTON_GREEN  12
 #define BUTTON_BLUE   2
 #define BUTTON_YELLOW 6
 
-
-// Buzzer pin definitions
 #define BUZZER1  4
 #define BUZZER2  7
 
-// Define game parameters
-#define ROUNDS_TO_WIN      5 //Number of rounds to succesfully remember before you win. 13 is do-able.
-#define ENTRY_TIME_LIMIT   3000 //Amount of time to press a button before game times out. 3000ms = 3 sec
+#define ROUNDS_TO_WIN      5 
+#define ENTRY_TIME_LIMIT   3000
 
 #define MODE_MEMORY  0
-#define MODE_BATTLE  1
-#define MODE_BEEGEES 2
 
-// Game state variables
-byte gameMode = MODE_MEMORY; //By default, let's play the memory game
-byte gameBoard[32]; //Contains the combination of buttons as we advance
-byte gameRound = 0; //Counts the number of succesful rounds the player has made it through
+byte gameMode = MODE_MEMORY; 
+byte gameBoard[32]; 
+byte gameRound = 0; 
+
+Servo servo1;
 
 void setup()
 {
-  //Setup hardware inputs/outputs. These pins are defined in the hardware_versions header file
 
-  //Enable pull ups on inputs
   pinMode(BUTTON_RED, INPUT_PULLUP);
   pinMode(BUTTON_GREEN, INPUT_PULLUP);
   pinMode(BUTTON_BLUE, INPUT_PULLUP);
@@ -144,152 +138,76 @@ void setup()
   pinMode(BUZZER1, OUTPUT);
   pinMode(BUZZER2, OUTPUT);
 
-  //Mode checking
-  gameMode = MODE_MEMORY; // By default, we're going to play the memory game
+  servo1.attach(9);
 
-  // Check to see if the lower right button is pressed
-  if (checkButton() == CHOICE_YELLOW) play_beegees();
+  gameMode = MODE_MEMORY; 
 
-  // Check to see if upper right button is pressed
-  if (checkButton() == CHOICE_GREEN)
-  {
-    gameMode = MODE_BATTLE; //Put game into battle mode
-
-    //Turn on the upper right (green) LED
-    setLEDs(CHOICE_GREEN);
-    toner(CHOICE_GREEN, 150);
-
-    setLEDs(CHOICE_RED | CHOICE_BLUE | CHOICE_YELLOW); // Turn on the other LEDs until you release button
-
-    while(checkButton() != CHOICE_NONE) ; // Wait for user to stop pressing button
-
-    //Now do nothing. Battle mode will be serviced in the main routine
-  }
-
-  play_winner(); // After setup is complete, say hello to the world
+  play_winner(); 
 }
 
 void loop()
 {
-  attractMode(); // Blink lights while waiting for user to press a button
+  attractMode(); 
 
-  // Indicate the start of game play
-  setLEDs(CHOICE_RED | CHOICE_GREEN | CHOICE_BLUE | CHOICE_YELLOW); // Turn all LEDs on
+  setLEDs(CHOICE_RED | CHOICE_GREEN | CHOICE_BLUE | CHOICE_YELLOW);
   delay(1000);
-  setLEDs(CHOICE_OFF); // Turn off LEDs
+  setLEDs(CHOICE_OFF); 
   delay(250);
 
   if (gameMode == MODE_MEMORY)
   {
-    // Play memory game and handle result
     if (play_memory() == true) 
-      play_winner(); // Player won, play winner tones
+      play_winner();
     else 
-      play_loser(); // Player lost, play loser tones
+      play_loser();
   }
 
-  if (gameMode == MODE_BATTLE)
-  {
-    play_battle(); // Play game until someone loses
-
-    play_loser(); // Player lost, play loser tones
-  }
-}
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//The following functions are related to game play only
-
-// Play the regular memory game
-// Returns 0 if player loses, or 1 if player wins
 boolean play_memory(void)
 {
-  randomSeed(millis()); // Seed the random generator with random amount of millis()
+  randomSeed(millis());
 
-  gameRound = 0; // Reset the game to the beginning
+  gameRound = 0;
 
   while (gameRound < ROUNDS_TO_WIN) 
   {
-    add_to_moves(); // Add a button to the current moves, then play them back
+    add_to_moves();
 
-    playMoves(); // Play back the current game board
+    playMoves();
 
-    // Then require the player to repeat the sequence.
     for (byte currentMove = 0 ; currentMove < gameRound ; currentMove++)
     {
-      byte choice = wait_for_button(); // See what button the user presses
+      byte choice = wait_for_button(); 
 
-      if (choice == 0) return false; // If wait timed out, player loses
+      if (choice == 0) return false;
 
-      if (choice != gameBoard[currentMove]) return false; // If the choice is incorect, player loses
+      if (choice != gameBoard[currentMove]) return false; 
     }
 
-    delay(1000); // Player was correct, delay before playing moves
+    delay(1000); 
   }
 
-  return true; // Player made it through all the rounds to win!
+  return true;
 }
 
-// Play the special 2 player battle mode
-// A player begins by pressing a button then handing it to the other player
-// That player repeats the button and adds one, then passes back.
-// This function returns when someone loses
-boolean play_battle(void)
-{
-  gameRound = 0; // Reset the game frame back to one frame
-
-  while (1) // Loop until someone fails 
-  {
-    byte newButton = wait_for_button(); // Wait for user to input next move
-    gameBoard[gameRound++] = newButton; // Add this new button to the game array
-
-    // Then require the player to repeat the sequence.
-    for (byte currentMove = 0 ; currentMove < gameRound ; currentMove++)
-    {
-      byte choice = wait_for_button();
-
-      if (choice == 0) return false; // If wait timed out, player loses.
-
-      if (choice != gameBoard[currentMove]) return false; // If the choice is incorect, player loses.
-    }
-
-    delay(100); // Give the user an extra 100ms to hand the game to the other player
-  }
-
-  return true; // We should never get here
-}
-
-// Plays the current contents of the game moves
 void playMoves(void)
 {
   for (byte currentMove = 0 ; currentMove < gameRound ; currentMove++) 
   {
     toner(gameBoard[currentMove], 150);
-
-    // Wait some amount of time between button playback
-    // Shorten this to make game harder
-    delay(150); // 150 works well. 75 gets fast.
+    delay(150); 
   }
 }
 
-// Adds a new random button to the game sequence, by sampling the timer
 void add_to_moves(void)
 {
-  byte newButton = random(0, 4); //min (included), max (exluded)
-
-  // We have to convert this number, 0 to 3, to CHOICEs
+  byte newButton = random(0, 4); 
   if(newButton == 0) newButton = CHOICE_RED;
   else if(newButton == 1) newButton = CHOICE_GREEN;
   else if(newButton == 2) newButton = CHOICE_BLUE;
   else if(newButton == 3) newButton = CHOICE_YELLOW;
-
-  gameBoard[gameRound++] = newButton; // Add this new button to the game array
+  gameBoard[gameRound++] = newButton; 
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//The following functions control the hardware
-
-// Lights a given LEDs
-// Pass in a byte that is made up from CHOICE_RED, CHOICE_YELLOW, etc
 void setLEDs(byte leds)
 {
   if ((leds & CHOICE_RED) != 0)
@@ -313,33 +231,30 @@ void setLEDs(byte leds)
     digitalWrite(LED_YELLOW, LOW);
 }
 
-// Wait for a button to be pressed. 
-// Returns one of LED colors (LED_RED, etc.) if successful, 0 if timed out
 byte wait_for_button(void)
 {
-  long startTime = millis(); // Remember the time we started the this loop
+  long startTime = millis(); 
 
-  while ( (millis() - startTime) < ENTRY_TIME_LIMIT) // Loop until too much time has passed
+  while ( (millis() - startTime) < ENTRY_TIME_LIMIT)
   {
     byte button = checkButton();
 
     if (button != CHOICE_NONE)
     { 
-      toner(button, 150); // Play the button the user just pressed
+      toner(button, 150); 
 
-      while(checkButton() != CHOICE_NONE) ;  // Now let's wait for user to release button
+      while(checkButton() != CHOICE_NONE) ;
 
-      delay(10); // This helps with debouncing and accidental double taps
+      delay(10);
 
       return button;
     }
 
   }
 
-  return CHOICE_NONE; // If we get here, we've timed out!
+  return CHOICE_NONE;
 }
 
-// Returns a '1' bit in the position corresponding to CHOICE_RED, CHOICE_GREEN, etc.
 byte checkButton(void)
 {
   if (digitalRead(BUTTON_RED) == 0) return(CHOICE_RED); 
@@ -347,19 +262,14 @@ byte checkButton(void)
   else if (digitalRead(BUTTON_BLUE) == 0) return(CHOICE_BLUE); 
   else if (digitalRead(BUTTON_YELLOW) == 0) return(CHOICE_YELLOW);
 
-  return(CHOICE_NONE); // If no button is pressed, return none
+  return(CHOICE_NONE); 
 }
 
-// Light an LED and play tone
-// Red, upper left:     440Hz - 2.272ms - 1.136ms pulse
-// Green, upper right:  880Hz - 1.136ms - 0.568ms pulse
-// Blue, lower left:    587.33Hz - 1.702ms - 0.851ms pulse
-// Yellow, lower right: 784Hz - 1.276ms - 0.638ms pulse
+
 void toner(byte which, int buzz_length_ms)
 {
-  setLEDs(which); //Turn on a given LED
-
-  //Play the sound associated with the given LED
+  setLEDs(which);
+  
   switch(which) 
   {
   case CHOICE_RED:
@@ -379,18 +289,15 @@ void toner(byte which, int buzz_length_ms)
   setLEDs(CHOICE_OFF); // Turn off all LEDs
 }
 
-// Toggle buzzer every buzz_delay_us, for a duration of buzz_length_ms.
 void buzz_sound(int buzz_length_ms, int buzz_delay_us)
 {
-  // Convert total play time from milliseconds to microseconds
+
   long buzz_length_us = buzz_length_ms * (long)1000;
 
-  // Loop until the remaining play time is less than a single buzz_delay_us
   while (buzz_length_us > (buzz_delay_us * 2))
   {
-    buzz_length_us -= buzz_delay_us * 2; //Decrease the remaining play time
+    buzz_length_us -= buzz_delay_us * 2; 
 
-    // Toggle the buzzer at various speeds
     digitalWrite(BUZZER1, LOW);
     digitalWrite(BUZZER2, HIGH);
     delayMicroseconds(buzz_delay_us);
@@ -401,45 +308,32 @@ void buzz_sound(int buzz_length_ms, int buzz_delay_us)
   }
 }
 int my_time_isnow[] = {
-  NOTE_G4, NOTE_A4, 0, NOTE_C5, 0, 0, NOTE_G4, 0, 0, 0,
-  NOTE_E4, 0, NOTE_D4, NOTE_E4, NOTE_G4, 0,
-  NOTE_D4, NOTE_E4, 0, NOTE_G4, 0, 0,
-  NOTE_D4, 0, NOTE_E4, 0, NOTE_G4, 0, NOTE_A4, 0, NOTE_C5, 0};
-// Play the winner sound and lights
+  NOTE_G4, NOTE_AS4, NOTE_F5, NOTE_G4, 0, 0, 
+  NOTE_AS4, NOTE_A4, NOTE_F5, NOTE_G4, 0, 0
+};
+  int noteDuration = 90;
+
 void play_winner(void)
 {
-  setLEDs(CHOICE_GREEN | CHOICE_BLUE);
-  //winner_sound();
-  melody[];
-  setLEDs(CHOICE_RED | CHOICE_YELLOW);
- // winner_sound();
-  setLEDs(CHOICE_GREEN | CHOICE_BLUE);
-  //winner_sound();
-  setLEDs(CHOICE_RED | CHOICE_YELLOW);
- // winner_sound();
-}
-
-// Play the winner sound
-// This is just a unique (annoying) sound we came up with, there is no magic to it
-void winner_sound(void)
-{
-  // Toggle the buzzer at various speeds
- for (byte x = 250 ; x > 70 ; x--)
+while(checkButton() == CHOICE_NONE)
   {
-    for (byte y = 0 ; y < 3 ; y++)
-    {
-      digitalWrite(BUZZER2, HIGH);
-      digitalWrite(BUZZER1, LOW);
-      delayMicroseconds(x);
-
-      digitalWrite(BUZZER2, LOW);
-      digitalWrite(BUZZER1, HIGH);
-      delayMicroseconds(x);
+    for (int thisNote = 0; thisNote < 32; thisNote++) {
+      servo1.write(180);
+      delay(500);       
+      servo1.write(0);  
+      delay(500);  
+      tone(BUZZER2, melody[thisNote],noteDuration);
+      int pauseBetweenNotes = noteDuration * 1.20;
+      delay(pauseBetweenNotes);
+      noTone(BUZZER2);
     }
   }
+  setLEDs(CHOICE_GREEN | CHOICE_BLUE);
+  setLEDs(CHOICE_RED | CHOICE_YELLOW);
+  setLEDs(CHOICE_GREEN | CHOICE_BLUE);
+  setLEDs(CHOICE_RED | CHOICE_YELLOW);
 }
 
-// Play the loser sound/lights
 void play_loser(void)
 {
   setLEDs(CHOICE_RED | CHOICE_GREEN);
@@ -455,7 +349,6 @@ void play_loser(void)
   buzz_sound(255, 1500);
 }
 
-// Show an "attract mode" display while waiting for user to press button.
 void attractMode(void)
 {
   while(1) 
@@ -475,160 +368,5 @@ void attractMode(void)
     setLEDs(CHOICE_YELLOW);
     delay(100);
     if (checkButton() != CHOICE_NONE) return;
-  }
-}
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-// The following functions are related to Beegees Easter Egg only
-
-// Notes in the melody. Each note is about an 1/8th note, "0"s are rests.
-int melody[] = {
-  NOTE_G4, NOTE_A4, 0, NOTE_C5, 0, 0, NOTE_G4, 0, 0, 0,
-  NOTE_E4, 0, NOTE_D4, NOTE_E4, NOTE_G4, 0,
-  NOTE_D4, NOTE_E4, 0, NOTE_G4, 0, 0,
-  NOTE_D4, 0, NOTE_E4, 0, NOTE_G4, 0, NOTE_A4, 0, NOTE_C5, 0};
-
-int noteDuration = 115; // This essentially sets the tempo, 115 is just about right for a disco groove :)
-int LEDnumber = 0; // Keeps track of which LED we are on during the beegees loop
-
-// Do nothing but play bad beegees music
-// This function is activated when user holds bottom right button during power up
-void play_beegees()
-{
-  //Turn on the bottom right (yellow) LED
-  setLEDs(CHOICE_YELLOW);
-  toner(CHOICE_YELLOW, 150);
-
-  setLEDs(CHOICE_RED | CHOICE_GREEN | CHOICE_BLUE); // Turn on the other LEDs until you release button
-
-  while(checkButton() != CHOICE_NONE) ; // Wait for user to stop pressing button
-
-  setLEDs(CHOICE_NONE); // Turn off LEDs
-
-  delay(1000); // Wait a second before playing song
-
-  digitalWrite(BUZZER1, LOW); // setup the "BUZZER1" side of the buzzer to stay low, while we play the tone on the other pin.
-
-  while(checkButton() == CHOICE_NONE) //Play song until you press a button
-  {
-    // iterate over the notes of the melody:
-    for (int thisNote = 0; thisNote < 32; thisNote++) {
-      changeLED();
-      tone(BUZZER2, melody[thisNote],noteDuration);
-      // to distinguish the notes, set a minimum time between them.
-      // the note's duration + 30% seems to work well:
-      int pauseBetweenNotes = noteDuration * 1.30;
-      delay(pauseBetweenNotes);
-      // stop the tone playing:
-      noTone(BUZZER2);
-    }
-  }
-}
-
-// Each time this function is called the board moves to the next LED
-void changeLED(void)
-{
-  setLEDs(1 << LEDnumber); // Change the LED
-
-  LEDnumber++; // Goto the next LED
-  if(LEDnumber > 3) LEDnumber = 0; // Wrap the counter if needed
-}
-
-
-UVTIVTIV
-
-// If we had to write a sketch to control a servo from scratch,
-// it would be a lot of work. Fortunately, others have done the
-// hard work for you. We're going to include a "library"
-// that has the functions needed to drive servos.
-
-// A library is an set of additional functions you can add to
-// your sketch. Numerous libraries are available for many uses,
-// see http://arduino.cc/en/Reference/Libraries for information
-// on the standard libraries, and Google for others. When you're
-// using a new part, chances are someone has written a library
-// for it.
-
-#include <Servo.h>  // servo library
-
-// Once you "include" a library, you'll have access to those
-// functions. You can find a list of the functions in the servo
-// library at: http://arduino.cc/en/Reference/Servo
-// Most libraries also have example sketches you can load from
-// the "file/examples" menu.
-
-// Now we'll create a servo "object", called servo1. You should
-// create one of these for each servo you want to control. 
-// You can control a maximum of twelve servos on the Uno 
-// using this library. (Other servo libraries may let you
-// control more). Note that this library disables PWM on
-// pins 9 and 10!
-
-Servo servo1;  // servo control object
-
-
-void setup()
-{
-  // We'll now "attach" the servo1 object to digital pin 9.
-  // If you want to control more than one servo, attach more
-  // servo objects to the desired pins (must be digital).
-
-  // Attach tells the Arduino to begin sending control signals
-  // to the servo. Servos require a continuous stream of control
-  // signals, even if you're not currently moving them.
-  // While the servo is being controlled, it will hold its 
-  // current position with some force. If you ever want to
-  // release the servo (allowing it to be turned by hand),
-  // you can call servo1.detach().
-
-  servo1.attach(9);
-}
-
-
-void loop()
-{
-  int position;
-  
-  // To control a servo, you give it the angle you'd like it
-  // to turn to. Servos cannot turn a full 360 degrees, but you
-  // can tell it to move anywhere between 0 and 180 degrees.
-
-  // Change position at full speed:
-
-  servo1.write(90);    // Tell servo to go to 90 degrees
-
-  delay(1000);         // Pause to get it time to move
-
-  servo1.write(180);   // Tell servo to go to 180 degrees
-
-  delay(1000);         // Pause to get it time to move
-
-  servo1.write(0);     // Tell servo to go to 0 degrees
-
-  delay(1000);         // Pause to get it time to move
-  
-  // Change position at a slower speed:
-
-  // To slow down the servo's motion, we'll use a for() loop
-  // to give it a bunch of intermediate positions, with 20ms
-  // delays between them. You can change the step size to make 
-  // the servo slow down or speed up. Note that the servo can't
-  // move faster than its full speed, and you won't be able
-  // to update it any faster than every 20ms.
-
-  // Tell servo to go to 180 degrees, stepping by two degrees
- 
-  for(position = 0; position < 180; position += 2)
-  {
-    servo1.write(position);  // Move to next position
-    delay(20);               // Short pause to allow it to move
-  }
-
-  // Tell servo to go to 0 degrees, stepping by one degree
-
-  for(position = 180; position >= 0; position -= 1)
-  {                                
-    servo1.write(position);  // Move to next position
-    delay(20);               // Short pause to allow it to move
   }
 }
