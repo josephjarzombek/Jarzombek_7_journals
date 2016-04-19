@@ -1,0 +1,11 @@
+
+What have you done?
+I have finished the actual simon say part of the game, as well as wrote the lines i need to make the piezzo play the song i want to play after you win.
+What do you need to do?
+I still need to write the code for the servo that will make it rapidly spin back and forth, and probably tryy and see if I can still work the photoresistor in becasue it is so neat.
+What will you be able to turn in on Friday?
+Hopefully majority of the project as most of the code comes from other circiuts. 
+What code changes are you writing?
+I am writing the tune that will play at the end, as well as changing some of the speeds/ directions of the servo. I still have not decided what I want to try and code with the photoresistor
+What functions have you created?
+The only function that i needed to right was one that will play the winning song, which I then put in the win function.
