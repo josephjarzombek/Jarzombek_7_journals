@@ -1,0 +1,17 @@
+Write a Java method to return the cubed value of some number.
+public int cat(int n) {
+return n * n * n;
+}
+    Write an Arduino function to return the cubed value of some number.
+void returnnum() {
+int num, cube;
+cube = num * num * num
+return cube;
+}
+    Create the class, an object, and class constructor for class student
+public class Student {
+public Student(String students) {
+Student stud = new Student();
+}
+Describe - if we were to continue with Arduino - what would you create?
+I would create code that would have a photoreistor connected to a piezzo buzzer and ass the photoresistor picks up more light the higher the buzzer sounds.
